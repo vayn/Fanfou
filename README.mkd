@@ -13,7 +13,7 @@ This is a Vim plugin for [fanfou (饭否) ](http://fanfou.com/)
 
 You should place the file as follows:
 
->    <your runtime directory>/plugin/fanfou.vim
+>   `<your runtime directory>/plugin/fanfou.vim`
 >    ...
 
 
