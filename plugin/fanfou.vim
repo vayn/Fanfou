@@ -1,6 +1,6 @@
 " Name Of File: fanfou.vim
 " Description:  Playing Fanfou in Vim
-" Last Change:  2011年 05月 24日 星期二 10:12:17 CST
+" Last Change:  2011年 05月 24日 星期二 19:27:00 CST
 " Maintainer:   Vayn <vayn@vayn.de>
 " License:      Vim lincense. See ":help license"
 " Usage:
@@ -16,7 +16,7 @@
 "
 " This plugin defines three commands:
 "
-"   FanTimeline - fetch latest timeline from fanfou.com
+"   FanTimeline - Fetch latest timeline from Fanfou
 "   FanUpdate - Update status in command line
 "   FanUpline - Send the line which is cursor on
 "
@@ -46,6 +46,7 @@ endif
 let s:save_cpo = &cpo
 set cpo&vim
 
+let s:source = 'fanfouvim'
 let s:timeline_api = 'http://api.fanfou.com/statuses/friends_timeline.json'
 let s:update_api = 'http://api.fanfou.com/statuses/update.xml'
 
@@ -118,7 +119,8 @@ fun s:Update(str)
     elseif length < 1
         echoerr "Your message is too short."
     else
-        let ret = system("curl -u " . s:login . ' -d status="' . a:str . '" ' . s:update_api)
+        let ret = system("curl -u " . s:login . " -d status='" . a:str .
+                    \ "' -d source=" . s:source . " " . s:update_api)
         if ret !~ "error"
             echo "Update successfully."
         else
