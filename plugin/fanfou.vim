@@ -1,6 +1,6 @@
 " Name Of File: fanfou.vim
 " Description:  Playing Fanfou in Vim
-" Last Change:  2011年 05月 24日 星期二 19:27:00 CST
+" Last Change:  2011年 05月 25日 星期三 10:35:49 CST
 " Maintainer:   Vayn <vayn@vayn.de>
 " License:      Vim lincense. See ":help license"
 " Usage:
@@ -32,6 +32,16 @@
 "   nmap ,ffu <Plug>FanfouUpdate
 "   nmap ,ffs <Plug>FanfouUpline
 "
+"
+" Timeline window closes automatically: 
+"
+"   let g:fanfou_pvw = 1
+"
+" If you don't want to close timeline automatically, add this to your vimrc file
+" and assign it to 0
+"
+" GetLatestVimScripts: 3596 0.2.0 Fanfou.vim
+"
 
 if exists("g:loaded_fanfou")
     finish
@@ -52,6 +62,10 @@ let s:update_api = 'http://api.fanfou.com/statuses/update.xml'
 
 let s:login = ""
 let s:limit = 140
+
+if !exists("g:fanfou_pvw")
+    let g:fanfou_pvw = 1
+endif
 
 if !hasmapto('<Plug>Fanfou*')
     map <unique> <Leader>fft <Plug>FanfouTimeline
@@ -101,11 +115,12 @@ def ParseTimeline(filename):
 
 ParseTimeline(vim.eval("tmp"))
 EOF
-        exe 'pedit ' . tmp
+        exe 'pedit' . tmp
         exe 'wincmd P'
-        exe "set buftype=nofile"
-        exe "setlocal noswapfile"
+        exe 'set buftype=nofile'
+        exe 'setlocal noswapfile'
         exe 'normal gg'
+        call s:ClosePreviewWindow()
     finally
         call delete(tmp)
     endtry
@@ -126,6 +141,12 @@ fun s:Update(str)
         else
             echoerr "Oops. Please check your settings and network."
         endif
+    endif
+endf
+
+fun s:ClosePreviewWindow()
+    if g:fanfou_pvw == 1
+        exe 'au WinLeave <buffer> pc'
     endif
 endf
 
