@@ -53,7 +53,7 @@ if !has('python')
     finish
 endif
 
-
+let s:version = 0.30
 let s:save_cpo = &cpo
 set cpo&vim
 
@@ -167,6 +167,8 @@ endf
 
 fun s:ClosePreviewWindow()
     if g:fanfou_pvw == 1
+        exe 'set title titlestring=Fanfou.vim ' . s:version
+        exe 'au WinLeave <buffer> set title titlestring&'
         exe 'au WinLeave <buffer> pc'
     endif
 endf
