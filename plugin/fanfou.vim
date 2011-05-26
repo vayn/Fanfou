@@ -40,7 +40,7 @@
 " If you don't want to close timeline automatically, add this to your vimrc file
 " and assign it to 0
 "
-" GetLatestVimScripts: 3596 0.3.0 Fanfou.vim
+" GetLatestVimScripts: 3596 1 Fanfou.vim
 "
 
 if exists("g:loaded_fanfou")
@@ -53,7 +53,7 @@ if !has('python')
     finish
 endif
 
-let s:version = 0.30
+let s:version = '0.3.1'
 let s:save_cpo = &cpo
 set cpo&vim
 
@@ -167,7 +167,7 @@ endf
 
 fun s:ClosePreviewWindow()
     if g:fanfou_pvw == 1
-        exe 'set title titlestring=Fanfou.vim ' . s:version
+        exe 'set title titlestring=Fanfou.vim\ ' . s:version
         exe 'au WinLeave <buffer> set title titlestring&'
         exe 'au WinLeave <buffer> pc'
     endif
