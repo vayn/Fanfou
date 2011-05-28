@@ -1,6 +1,6 @@
 " Name Of File: fanfou.vim
 " Description:  Playing Fanfou in Vim
-" Last Change:  2011年 05月 28日 星期六 19:26:54 CST
+" Last Change:  2011年 05月 28日 星期六 19:27:54 CST
 " Maintainer:   Vayn <vayn@vayn.de>
 " License:    Vim lincense. See ":help license"
 " Usage:
@@ -14,7 +14,7 @@
 " script.
 "
 "
-" This plugin defines three commands:
+" This plugin defines four commands:
 "
 "   FanTimeline - Fetch latest timeline from Fanfou
 "   FanUpdate - Update status in command line
