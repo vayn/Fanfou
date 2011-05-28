@@ -37,8 +37,15 @@
 "
 "   let g:fanfou_pvw = 1
 "
-" If you don't want to close timeline automatically, add this to your vimrc file
-" and assign it to 0
+" If you don't want to close timeline automatically, add this to your vimrc
+" file and assign it to 0
+"
+"
+" Copy Link to system clipboard:
+"
+" If you're running on *nix-like operation system, you can copy link in the
+" message by pressing enter key. Try it :D
+"
 "
 " GetLatestVimScripts: 3596 1 Fanfou.vim
 "
@@ -48,12 +55,12 @@ if exists("g:loaded_fanfou")
 endif
 let g:loaded_fanfou = 1
 
-if !has('python')
+if ! has('python')
     echoerr "Error: the fanfou.vim plugin requires Vim to be compiled with +python"
     finish
 endif
 
-let s:version = '0.3.1'
+let s:version = '0.4.0'
 let s:save_cpo = &cpo
 set cpo&vim
 
@@ -65,12 +72,12 @@ let s:update_api = 'http://api.fanfou.com/statuses/update.xml'
 let s:login = ""
 let s:limit = 140
 
-if !exists("g:fanfou_pvw")
+if ! exists("g:fanfou_pvw")
     let g:fanfou_pvw = 1
 endif
 
 
-if !hasmapto('<Plug>Fanfou*')
+if ! hasmapto('<Plug>Fanfou*')
     map <unique> <Leader>fft <Plug>FanfouTimeline
     map <unique> <Leader>ffu <Plug>FanfouUpdate
     map <unique> <Leader>ffs <Plug>FanfouUpline
@@ -93,8 +100,10 @@ def ParseTimeline(filename):
     try:
         json = urllib2.urlopen(req).read()
         data = loads(json)
-        tweets = [item['user']['name']+': '+item['text'] for item in data]
-        open(filename, 'w').write('\n'.join(tweets).encode('utf8'))
+        tweets = ['*'+item['user']['name']+': '+item['text'] for item in data]
+        tweets = '\n'.join(tweets).encode('utf8')
+        vim.command('let text = s:Unescape("%s")' % tweets)
+        open(filename, 'w').write(vim.eval('text'))
     except:
         vim.command("echoerr 'Invalid username or password.'")
 
@@ -104,6 +113,11 @@ EOF
         exe 'wincmd P'
         exe 'set buftype=nofile'
         exe 'setlocal noswapfile'
+        exe 'setlocal ft=fanfou'
+        exe 'call s:Timeline_syntax()'
+        if ! has('win32')
+          exe 'nmap <silent> <buffer> <CR> :call <SID>CpLink()<CR>'
+        endif
         exe 'normal gg'
         call s:ClosePreviewWindow()
     fina
@@ -173,16 +187,55 @@ fun s:ClosePreviewWindow()
     endif
 endf
 
+fun s:CpLink()
+    let line = getline('.')
+    let line = matchstr(line, '\%(http://\|www\.\)[^ ,;\t]*')
+    if strlen(line) > 3
+        try
+            call system("xsel -b -i", line)
+            echo "Copy successfully."
+        catch
+            echo "Your system doesn't support this function."
+        endt
+    endif
+endf
 
-if !exists(":FanTimeline")
+fun s:Unescape(str)
+    fun l:nr2chr(nr)
+        return nr2char(a:nr)
+    endf
+
+    let str = substitute(a:str, '&amp;', '\&', 'g')
+    let str = substitute(str, '&quot;', '"', 'g')
+    let str = substitute(str, '&lt;', '<', 'g')
+    let str = substitute(str, '&gt;', '>', 'g')
+    let str = substitute(str, '&#\(\d\+\);', '\=l:nr2chr(submatch(1))', 'g')
+    return str
+endf
+
+fun s:Timeline_syntax()
+    if has('syntax') && exists('g:syntax_on')
+        syntax clear
+        syntax match FanUser /^.\{-1,}:/
+        syntax match FanUrl "\%(http://\|www\.\)[^ ,;\t]*"
+        syntax match FanReply /\w\@<!@\w\+/
+
+        highlight default link FanUser Identifier
+        highlight default link FanUrl Underlined
+        highlight default link FanReply Label
+    endif
+endf
+
+
+if ! exists(":FanTimeline")
     command FanTimeline  :call s:Timeline()
 endif
 
-if !exists(":FanUpdate")
+if ! exists(":FanUpdate")
     command -nargs=1 FanUpdate  :call s:Update(<q-args>)
 endif
 
-if !exists(":FanUpline")
+if ! exists(":FanUpline")
     command FanUpline  :call s:Update(getline("."))
 endif
 
