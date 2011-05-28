@@ -238,16 +238,20 @@ fun s:Timeline_syntax()
 endf
 
 
-if ! exists(":FanTimeline")
-  command FanTimeline  :call s:Timeline()
+if ! exists(':FanTimeline')
+  command FanTimeline :call s:Timeline()
 endif
 
-if ! exists(":FanUpdate")
-  command -nargs=1 FanUpdate  :call s:Update(<q-args>)
+if ! exists(':FanUpdate')
+  command -nargs=1 FanUpdate :call s:Update(<q-args>, 0)
 endif
 
-if ! exists(":FanUpline")
-  command FanUpline  :call s:Update(getline("."))
+if ! exists(':FanUpline')
+  command FanUpline :call s:Update(getline('.'), 0)
+endif
+
+if ! exists(':FanRT')
+  command FanRT :call s:Update(getline('.'), 1)
 endif
 
 let &cpo = s:save_cpo
