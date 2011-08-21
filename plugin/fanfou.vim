@@ -1,8 +1,8 @@
-" Name Of File: fanfou.vim
-" Description:  Playing Fanfou in Vim
-" Last Change:  2011年 05月 28日 星期六 19:27:54 CST
+" Name Of File: Fanfou.vim
+" Description:  Play Fanfou in Vim
+" Last Change:  Mon Aug 22 00:50:00 CST 2011
 " Maintainer:   Vayn <vayn@vayn.de>
-" License:    Vim lincense. See ":help license"
+" License:      Vim lincense. See ":help license"
 " Usage:
 "
 " First of all, you must set your username and password of fanfou.com.
@@ -58,12 +58,12 @@ if exists("g:loaded_fanfou")
 endif
 let g:loaded_fanfou = 1
 
-if ! has('python')
+if ! has('python3')
   echoerr "Error: the fanfou.vim plugin requires Vim to be compiled with +python"
   finish
 endif
 
-let s:version = '0.4.1'
+let s:version = '0.5.0'
 let s:save_cpo = &cpo
 set cpo&vim
 
@@ -104,10 +104,10 @@ fun s:Timeline()
     python << EOF
 def ParseTimeline(filename):
   try:
-    json = urllib2.urlopen(req).read()
-    data = loads(json)
+    json = request.urlopen(req).read()
+    data = loads(json.decode('utf8'))
     tweets = ['*'+item['user']['name']+': '+item['text'] for item in data]
-    tweets = '\n'.join(tweets).encode('utf8')
+    tweets = '\n'.join(tweets)
     vim.command('let text = s:Unescape("%s")' % tweets)
     open(filename, 'w').write(vim.eval('text'))
   except:
@@ -145,7 +145,7 @@ fun s:Update(str, bRT)
     endif
     call s:Requester(s:update_api, l:str)
     try
-      exe 'py urllib2.urlopen(req).read()'
+      exe 'py3 request.urlopen(req).read()'
       echo 'Update successfully.'
     catch
       echoerr 'Oops. Please check your account and network.'
@@ -163,30 +163,25 @@ fun s:Requester(api, param)
     let s:login = acc . ':' . pass
   endif
   python << EOF
-import urllib
-import urllib2
 import vim
-
-try:
-  from simplejson import loads
-except ImportError:
-  vim.command("echoerr 'Fanfou.vim requires Python module simplejson.'")
+from json import loads
+from urllib import request, parse
 
 api = vim.eval('a:api')
 account = vim.eval('s:login').split(':', 1)
-auth = urllib2.HTTPPasswordMgrWithDefaultRealm()
+auth = request.HTTPPasswordMgrWithDefaultRealm()
 auth.add_password(None, api, account[0], account[1])
 
-handler = urllib2.HTTPBasicAuthHandler(auth)
-opener = urllib2.build_opener(handler)
-urllib2.install_opener(opener)
+handler = request.HTTPBasicAuthHandler(auth)
+opener = request.build_opener(handler)
+request.install_opener(opener)
 
 if vim.eval('a:param') == 0:
   param = None
 else:
-  param = urllib.urlencode({'status': vim.eval('a:param'),
+  param = parse.urlencode({'status': vim.eval('a:param'),
                             'source': vim.eval('s:source')})
-req = urllib2.Request(api, param)
+req = request.Request(api, param)
 EOF
 endf
 
