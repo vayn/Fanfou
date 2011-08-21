@@ -1,6 +1,6 @@
 " Name Of File: Fanfou.vim
 " Description:  Play Fanfou in Vim
-" Last Change:  Mon Aug 22 00:50:00 CST 2011
+" Last Change:  Mon Aug 22 03:05:33 CST 2011
 " Maintainer:   Vayn <vayn@vayn.de>
 " License:      Vim lincense. See ":help license"
 " Usage:
@@ -59,7 +59,7 @@ endif
 let g:loaded_fanfou = 1
 
 if ! has('python3')
-  echoerr "Error: the fanfou.vim plugin requires Vim to be compiled with +python"
+  echoerr "Error: the fanfou.vim plugin requires Vim to be compiled with +python3"
   finish
 endif
 
@@ -101,7 +101,7 @@ fun s:Timeline()
   call s:Requester(s:timeline_api, 0)
   let tmp = tempname()
   try
-    python << EOF
+    python3 << EOF
 def ParseTimeline(filename):
   try:
     json = request.urlopen(req).read()
@@ -162,7 +162,7 @@ fun s:Requester(api, param)
     let pass = inputsecret('type your password: ')
     let s:login = acc . ':' . pass
   endif
-  python << EOF
+  python3 << EOF
 import vim
 from json import loads
 from urllib import request, parse
@@ -176,11 +176,12 @@ handler = request.HTTPBasicAuthHandler(auth)
 opener = request.build_opener(handler)
 request.install_opener(opener)
 
-if vim.eval('a:param') == 0:
+if vim.eval('a:param') == '0':
   param = None
 else:
   param = parse.urlencode({'status': vim.eval('a:param'),
-                            'source': vim.eval('s:source')})
+                           'source': vim.eval('s:source')})
+  param = param.encode('utf8')
 req = request.Request(api, param)
 EOF
 endf
@@ -207,15 +208,11 @@ fun s:CpLink()
 endf
 
 fun s:Unescape(str)
-  fun l:nr2chr(nr)
-    return nr2char(a:nr)
-  endf
-
   let str = substitute(a:str, '&amp;', '\&', 'g')
   let str = substitute(str, '&quot;', '"', 'g')
   let str = substitute(str, '&lt;', '<', 'g')
   let str = substitute(str, '&gt;', '>', 'g')
-  let str = substitute(str, '&#\(\d\+\);', '\=l:nr2chr(submatch(1))', 'g')
+  let str = substitute(str, '&#\(\d\+\);', '\=nr2char(submatch(1))', 'g')
   return str
 endf
 
