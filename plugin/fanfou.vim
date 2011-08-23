@@ -1,6 +1,6 @@
 " Name Of File: Fanfou.vim
 " Description:  Play Fanfou in Vim
-" Last Change:  Mon Aug 22 03:05:33 CST 2011
+" Last Change:  Tue Aug 23 13:45:39 CST 2011
 " Maintainer:   Vayn <vayn@vayn.de>
 " License:      Vim lincense. See ":help license"
 " Usage:
@@ -220,7 +220,7 @@ fun s:Timeline_syntax()
   if has('syntax') && exists('g:syntax_on')
     syntax clear
     syntax match FanUser /^.\{-1,}:/
-    syntax match FanUrl "\%(http://\|www\.\)[^ ,;\t]*"
+    syntax match FanUrl "\%(https\=://\|www\.\)[a-zA-Z0-9_./\-:@]\+"
     syntax match FanReply /\w\@<!@\(\w\|[^\x00-\xff：，？。“”！——……]\)\+/
 
     highlight default link FanUser Identifier
