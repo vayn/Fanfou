@@ -221,7 +221,7 @@ fun s:Timeline_syntax()
     syntax clear
     syntax match FanUser /^.\{-1,}:/
     syntax match FanUrl "\%(https\=://\|www\.\)[a-zA-Z0-9_./\-:@]\+"
-    syntax match FanReply /\w\@<!@\(\w\|[^\x00-\xff：，？。“”！——……]\)\+/
+    syntax match FanReply /\w\@<!@\(\w\|\.\|[^\x00-\xff：，？。“”！——……]\)\+/
 
     highlight default link FanUser Identifier
     highlight default link FanUrl Underlined
