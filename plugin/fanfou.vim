@@ -63,6 +63,12 @@ if ! has('python3')
   finish
 endif
 
+if $SUDO_USER != ''
+  echoerr '"sudo vim" is detected. Please use sudo.vim or other plugins instead.'
+  echoerr 'fanfou.vim is disabled.'
+  finish
+endif
+
 let s:version = '0.5.0'
 let s:save_cpo = &cpo
 set cpo&vim
